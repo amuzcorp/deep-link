@@ -1,0 +1,34 @@
+{
+    "name": "xiso/deep-link",
+    "type" : "amuz-package",
+    "description": "DeepLink Package For CMS-UP by xiso",
+    "keywords": [
+        "laravel",
+        "nova",
+        "amuz",
+        "cms"
+    ],
+    "license": "MIT",
+    "require": {
+        "php": ">=8.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "AmuzPackages\\DeepLink\\": "src/",
+            "AmuzPackages\\DeepLink\\Database\\Factories\\": "src/database/factories/",
+            "AmuzPackages\\DeepLink\\Database\\Seeders\\": "src/database/seeders/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "AmuzPackages\\DeepLink\\DeepLinkServiceProvider"
+            ]
+        }
+    },
+    "config": {
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true
+}
