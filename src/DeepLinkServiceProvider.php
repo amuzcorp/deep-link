@@ -50,6 +50,12 @@ class DeepLinkServiceProvider extends AbstractPackageProvider
                 ->prefix('api/deep-link')
                 ->group(__DIR__.'/routes/api.php');
 
+
+        Route::middleware(['web'])
+                ->name('deep-link.')
+                ->prefix(config('deep-link.prefix','deep-link'))
+                ->group(__DIR__.'/routes/deep-link-web.php');
+
     }
 
     /**
