@@ -22,8 +22,6 @@ return new class extends Migration
 
             $table->text('ios_bundle')->nullable();
             $table->text('ios_install_url')->nullable();
-
-            $table->json('context_data')->nullable();
             $table->timestamps();
         });
     }

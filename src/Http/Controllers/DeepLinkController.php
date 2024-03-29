@@ -2,13 +2,13 @@
 
 namespace AmuzPackages\DeepLink\Http\Controllers;
 
+use AmuzPackages\DeepLink\Models\LinkContextHistory;
 use AmuzPackages\DeepLink\Traits\HasDeepLink;
 use AmuzPackages\DeepLink\Models\DeepLink;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
-use Illuminate\Support\Str;
-use Laravel\Jetstream\Agent;
+use hisorange\BrowserDetect\Parser as Browser;
 
 class DeepLinkController extends Controller
 {
@@ -23,7 +23,24 @@ class DeepLinkController extends Controller
     {
         $deepLink = DeepLink::query()->where('slug', $slug)->firstOrFail();
 
-        $agent = new Agent();
+
+        $ipAddress = $request->ip();
+        $userAgent = $request->header('User-Agent');
+        $os = Browser::platformName();
+        $browser = Browser::browserName();
+        $deviceType = Browser::deviceType();
+        $accessedAt = now();
+
+        // 기록 저장
+        LinkContextHistory::create([
+            'ip_address' => $ipAddress,
+            'user_agent' => $userAgent,
+            'os' => $os,
+            'browser' => $browser,
+            'device_type' => $deviceType,
+            'accessed_at' => $accessedAt,
+            'deep_link_id' => DeepLink::where('slug', $slug)->firstOrFail()->id,
+        ]);
 
         // Android 기기인 경우
         if ($agent->isAndroidOS()) {
