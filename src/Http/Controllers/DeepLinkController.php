@@ -2,64 +2,76 @@
 
 namespace AmuzPackages\DeepLink\Http\Controllers;
 
+use AmuzPackages\DeepLink\Models\LinkContext;
 use AmuzPackages\DeepLink\Models\LinkContextHistory;
 use AmuzPackages\DeepLink\Traits\HasDeepLink;
 use AmuzPackages\DeepLink\Models\DeepLink;
 use App\Http\Controllers\Controller;
+use Illuminate\Contracts\View\View;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
-use hisorange\BrowserDetect\Parser as Browser;
+use hisorange\BrowserDetect\Facade as Browser;
 
 class DeepLinkController extends Controller
 {
-    use HasDeepLink;
-    public function store(Request $request): JsonResponse
+    private $browserDetect;
+    public function __construct()
     {
-        $deepLinkUrl = $this->createDeepLink($request->get('target_url'),$request->get('context_data',[]));
-        return response()->json(['deep_link' => $deepLinkUrl]);
+        $this->middleware(function ($request, $next) {
+            $this->browserDetect = app('browser-detect');
+            return $next($request);
+        });
     }
 
-    public function redirect(Request $request, $slug)
+    public function getContext(Request $request): JsonResponse
     {
-        $deepLink = DeepLink::query()->where('slug', $slug)->firstOrFail();
+        /** @var LinkContextHistory $linkContextHistory */
+        $linkContextHistory = LinkContextHistory::query()->where([
+            'ip_address' => $request->ip(),
+            'device_family' => $this->browserDetect->deviceFamily(),
+            'device_model' => $this->browserDetect->deviceModel(),
+            'device_type' => $this->browserDetect->deviceType(),
+            'platform_name' => $this->browserDetect->platformName(),
+            'platform_version' => $this->browserDetect->platformVersion(),
+            'platform_family' => $this->browserDetect->platformFamily(),
+        ])->first();
 
+        if($linkContextHistory == null) return response()->json([]);
+        return response()->json($linkContextHistory->linkContext->getAttribute('context_data'));
+    }
 
-        $ipAddress = $request->ip();
-        $userAgent = $request->header('User-Agent');
-        $os = Browser::platformName();
-        $browser = Browser::browserName();
-        $deviceType = Browser::deviceType();
-        $accessedAt = now();
+    public function redirect(Request $request, $shortLinkId): View|RedirectResponse
+    {
+        /** @var LinkContext $linkContext */
+        $linkContext = LinkContext::query()
+            ->with('deepLink')
+            ->where('short_link', $shortLinkId)
+            ->first();
+        if(!$linkContext) return view(config('deep-link.pages.fail','deeplink::fail'));
 
-        // 기록 저장
-        LinkContextHistory::create([
-            'ip_address' => $ipAddress,
-            'user_agent' => $userAgent,
-            'os' => $os,
-            'browser' => $browser,
-            'device_type' => $deviceType,
-            'accessed_at' => $accessedAt,
-            'deep_link_id' => DeepLink::where('slug', $slug)->firstOrFail()->id,
+        $linkContextHistory = $linkContext->linkContextHistories()->create([
+            'ip_address' => $request->ip(),
+
+            'browser_family' => $this->browserDetect->browserFamily(),
+            'browser_engine' => $this->browserDetect->browserEngine(),
+            'browser_name' => $this->browserDetect->browserName(),
+            'browser_version' => $this->browserDetect->browserVersion(),
+            'device_family' => $this->browserDetect->deviceFamily(),
+            'device_model' => $this->browserDetect->deviceModel(),
+            'device_type' => $this->browserDetect->deviceType(),
+            'platform_name' => $this->browserDetect->platformName(),
+            'platform_version' => $this->browserDetect->platformVersion(),
+            'platform_family' => $this->browserDetect->platformFamily(),
+
+            'referrer' => $request->header('referer'),
+            'user_agent' => $this->browserDetect->userAgent(),
         ]);
 
-        // Android 기기인 경우
-        if ($agent->isAndroidOS()) {
-            if ($deepLink->aos_package && $request->has('installed') && $request->installed == 'true') {
-                return redirect()->away('intent://' . $deepLink->aos_package . '#Intent;scheme=yourapp;package=' . $deepLink->aos_package . ';end');
-            } else {
-                return redirect()->away($deepLink->aos_install_url);
-            }
+        if($this->browserDetect->deviceType() == "Desktop"){
+            return redirect()->away($linkContext->deepLink->getAttribute('target_url'));
+        }else{
+            return view(config('deep-link.pages.run','deeplink::run'),compact('linkContextHistory','linkContext'));
         }
-
-        // iOS 기기인 경우
-        if ($agent->isiOS()) {
-            if ($deepLink->ios_bundle && $request->has('installed') && $request->installed == 'true') {
-                return redirect()->away('yourapp://' . $deepLink->ios_bundle);
-            } else {
-                return redirect()->away($deepLink->ios_install_url);
-            }
-        }
-
-        return redirect()->away($deepLink->target_url);
     }
 }

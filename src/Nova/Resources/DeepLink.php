@@ -3,6 +3,7 @@
 namespace AmuzPackages\DeepLink\Nova\Resources;
 
 use IbrahemKamal\JsonField\JsonField;
+use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -23,7 +24,7 @@ class DeepLink extends Resource
      *
      * @var string
      */
-    public static $title = 'id';
+    public static $title = 'slug';
 
     /**
      * The columns that should be searched.
@@ -31,7 +32,7 @@ class DeepLink extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id','slug'
     ];
 
     /**
@@ -40,77 +41,41 @@ class DeepLink extends Resource
      */
     public static $group = "DEEP-LINK";
 
-    /**
-     * Get the fields displayed by the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function fields(NovaRequest $request)
+    public function fields(NovaRequest $request): array
     {
         return [
             ID::make()->sortable(),
 
-            URL::make('DeepLink',function(\AmuzPackages\DeepLink\Models\DeepLink $deepLink){
-                return route('deep-link.get',['slug' => $deepLink->getAttribute('slug')]);
-            })->displayUsing(fn($value)=>$value),
+            Text::make('슬러그','slug'),
 
-            URL::make('대표 URL','target_url')->nullable(),
+            URL::make('대표 URL','target_url')->nullable()->displayUsing(fn($value)=>$value),
 
             Text::make('Android Package','aos_package')->nullable(),
-            URL::make('Install URL (android)','aos_install_url')->nullable(),
+            URL::make('Install URL (android)','aos_install_url')->nullable()->displayUsing(fn($value)=>$value),
 
             Text::make('iOS Bundle Name','ios_bundle')->nullable(),
-            URL::make('Install URL (iOS)','ios_install_url')->nullable(),
+            URL::make('Install URL (iOS)','ios_install_url')->nullable()->displayUsing(fn($value)=>$value),
 
-            JsonField::make('Data','context_data')
-                ->onlyOnDetail()
-                ->mode('view')
-                ->expandedOnStart(true)
-                ->defaultJsonPath(__DIR__ . "/../deep-link-default.json")
+            HasMany::make('컨텍스트 링크','linkContexts',LinkContext::class)
         ];
     }
 
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function cards(NovaRequest $request)
+    public function cards(NovaRequest $request): array
     {
         return [];
     }
 
-    /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function filters(NovaRequest $request)
+    public function filters(NovaRequest $request): array
     {
         return [];
     }
 
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function lenses(NovaRequest $request)
+    public function lenses(NovaRequest $request): array
     {
         return [];
     }
 
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function actions(NovaRequest $request)
+    public function actions(NovaRequest $request): array
     {
         return [];
     }

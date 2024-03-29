@@ -1,7 +1,10 @@
 <?php
 
 namespace AmuzPackages\DeepLink\Nova\ResourceTools;
+
 use AmuzPackages\DeepLink\Nova\Resources\DeepLink;
+use AmuzPackages\DeepLink\Nova\Resources\LinkContext;
+use AmuzPackages\DeepLink\Nova\Resources\LinkContextHistory;
 use Illuminate\Http\Request;
 use Laravel\Nova\Exceptions\NovaException;
 use Laravel\Nova\Menu\MenuItem;
@@ -28,6 +31,8 @@ class DeepLinkResourceTool extends Tool
     {
         return MenuSection::make('딥링크',[
             MenuItem::resource(DeepLink::class),
+            MenuItem::resource(LinkContext::class),
+            MenuItem::resource(LinkContextHistory::class),
         ])->icon('link')->collapsable();
     }
 }

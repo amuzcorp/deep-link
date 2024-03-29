@@ -2,37 +2,25 @@
 
 namespace AmuzPackages\DeepLink\Models;
 
-use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Support\Str;
+use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 
+/**
+ * @property LinkContext[] $LinkContexts
+ * @property LinkContextHistory[] $linkContextHistories
+ */
 class DeepLink extends Model
 {
-    use HasFactory;
-    protected $fillable = [
-        'slug',
-        'target_url',
+    protected $guarded = [];
 
-        'aos_package',
-        'aos_install_url',
-
-        'ios_bundle',
-        'ios_install_url',
-        'context_data'
-    ];
-    protected $casts = ['context_data' => 'array'];
-
-    protected static function boot()
+    public function linkContexts(): HasMany
     {
-        parent::boot();
-        self::creating(function(DeepLink $deepLink){
-            $isUnique = false;
-            $slug = '';
-            while(!$isUnique){
-                $slug = Str::random(10);
-                $isUnique = !DeepLink::query()->where('slug', $slug)->exists();
-            }
-            $deepLink->setAttribute('slug',$slug);
-        });
+        return $this->hasMany(LinkContext::class);
+    }
+
+    public function linkContextHistories(): HasManyThrough
+    {
+        return $this->hasManyThrough(LinkContextHistory::class,LinkContext::class);
     }
 }

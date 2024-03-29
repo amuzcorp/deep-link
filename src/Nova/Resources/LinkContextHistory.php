@@ -3,9 +3,12 @@
 namespace AmuzPackages\DeepLink\Nova\Resources;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 use Laravel\Nova\Fields\ID;
 use App\Nova\Resource;
+use Laravel\Nova\Panel;
 
 class LinkContextHistory extends Resource
 {
@@ -38,59 +41,53 @@ class LinkContextHistory extends Resource
      */
     public static $group = "DEEP-LINK";
 
-    /**
-     * Get the fields displayed by the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function fields(NovaRequest $request)
+    public function fields(NovaRequest $request): array
     {
         return [
             ID::make()->sortable(),
+            BelongsTo::make('Context','linkContext',LinkContext::class),
+
+            Text::make('ip_address'),
+            Text::make('referrer')->onlyOnDetail(),
+            Text::make('user_agent')->onlyOnDetail(),
+
+            Panel::make('Device',[
+                Text::make('device_family'),
+                Text::make('device_model'),
+                Text::make('device_type'),
+            ]),
+
+            Panel::make('Platform',[
+                Text::make('platform_name'),
+                Text::make('platform_version'),
+                Text::make('platform_family'),
+            ]),
+
+            Panel::make('Browser',[
+                Text::make('browser_family'),
+                Text::make('browser_engine')->onlyOnDetail(),
+                Text::make('browser_name')->onlyOnDetail(),
+                Text::make('browser_version')->onlyOnDetail(),
+            ]),
         ];
     }
 
-    /**
-     * Get the cards available for the request.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function cards(NovaRequest $request)
+    public function cards(NovaRequest $request): array
     {
         return [];
     }
 
-    /**
-     * Get the filters available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function filters(NovaRequest $request)
+    public function filters(NovaRequest $request): array
     {
         return [];
     }
 
-    /**
-     * Get the lenses available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function lenses(NovaRequest $request)
+    public function lenses(NovaRequest $request): array
     {
         return [];
     }
 
-    /**
-     * Get the actions available for the resource.
-     *
-     * @param  \Laravel\Nova\Http\Requests\NovaRequest $request
-     * @return array
-     */
-    public function actions(NovaRequest $request)
+    public function actions(NovaRequest $request): array
     {
         return [];
     }
