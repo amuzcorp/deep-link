@@ -14,7 +14,12 @@ use Illuminate\Support\Str;
 class LinkContext extends Model
 {
     protected $guarded = [];
-    protected $casts = ['context_data' => 'array'];
+    protected $casts = [
+        'context_data' => 'array'
+    ];
+    protected $appends = [
+        'short_link_url'
+    ];
 
     public function deepLink(): BelongsTo
     {
@@ -24,6 +29,12 @@ class LinkContext extends Model
     {
         return $this->hasMany(LinkContextHistory::class);
     }
+
+    public function getShortLinkUrlAttribute(): string
+    {
+        return route('deep-link.short-link',['shortLink' => $this->attributes['short_link']]);
+    }
+
     protected static function boot(): void
     {
         parent::boot();

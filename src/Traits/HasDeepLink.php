@@ -3,15 +3,23 @@
 namespace AmuzPackages\DeepLink\Traits;
 
 use AmuzPackages\DeepLink\Models\DeepLink;
+use Exception;
 
 trait HasDeepLink{
-    public function createDeepLink(string $targetUrl,array $contextData): string
+    /**
+     * @throws Exception
+     */
+    public function createDeepLink(string $slug, array $contextData): string
     {
-        $deepLink = DeepLink::query()->create([
-            'target_url' => $targetUrl,
-            'context_data' => $contextData,
-        ]);
+        /** @var DeepLink $deepLink */
+        $deepLink = DeepLink::query()->where('slug',$slug)->first();
+        if(!$deepLink){
+            throw new Exception("Invalid Deeplink Slug.");
+        }
 
-        return route('deep-link.get',['slug' => $deepLink->getAttribute('slug')]);
+        $linkContext = $deepLink->linkContexts()->create([
+            'context_data' => $contextData
+        ]);
+        return $linkContext->getAttribute('short_link_url');
     }
 }
