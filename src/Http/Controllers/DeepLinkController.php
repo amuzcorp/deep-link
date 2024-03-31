@@ -48,7 +48,7 @@ class DeepLinkController extends Controller
             ->with('deepLink')
             ->where('short_link', $shortLinkId)
             ->first();
-        if(!$linkContext) return view(config('deep-link.pages.fail','deeplink::fail'));
+        if(!$linkContext) return view(config('deep-link.pages.fail','deep-link::fail'));
 
         $linkContextHistory = $linkContext->linkContextHistories()->create([
             'ip_address' => $request->ip(),
@@ -71,7 +71,7 @@ class DeepLinkController extends Controller
         if($this->browserDetect->deviceType() == "Desktop"){
             return redirect()->away($linkContext->deepLink->getAttribute('target_url'));
         }else{
-            return view(config('deep-link.pages.run','deeplink::run'),compact('linkContextHistory','linkContext'));
+            return view(config('deep-link.pages.run','deep-link::run'),compact('linkContextHistory','linkContext'));
         }
     }
 }

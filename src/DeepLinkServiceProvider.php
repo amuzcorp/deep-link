@@ -13,7 +13,7 @@ class DeepLinkServiceProvider extends AbstractPackageProvider
     public function register(): void
     {
         $this->mergeConfigFrom(__DIR__.'/config/deep-link.php','deep-link');
-        $this->loadViewsFrom(__DIR__.'/resources/views','deeplink');
+        $this->loadViewsFrom(__DIR__.'/resources/views','deep-link');
 
          $this->app->booted(function () {
             $this->routes();
