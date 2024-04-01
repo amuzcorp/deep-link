@@ -69,7 +69,7 @@ class DeepLinkController extends Controller
         ]);
 
         if($this->browserDetect->deviceType() == "Desktop"){
-            return redirect()->away($linkContext->deepLink->getAttribute('target_url'));
+            return redirect()->to($linkContext->deepLink->getAttribute('target_url'));
         }else{
             return view(config('deep-link.pages.run','deep-link::run'),compact('linkContextHistory','linkContext'));
         }
