@@ -2,7 +2,6 @@
 
 namespace AmuzPackages\DeepLink\Nova\Resources;
 
-use IbrahemKamal\JsonField\JsonField;
 use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\URL;
@@ -51,11 +50,11 @@ class LinkContext extends Resource
                 return route('deep-link.short-link',['shortLink' => $linkContext->getAttribute('short_link')]);
             })->displayUsing(fn($value)=>$value),
 
-            JsonField::make('Data','context_data')
-                ->onlyOnDetail()
-                ->mode('view')
-                ->expandedOnStart(true)
-                ->defaultJsonPath(__DIR__ . "/../deep-link-default.json"),
+//            JsonField::make('Data','context_data')
+//                ->onlyOnDetail()
+//                ->mode('view')
+//                ->expandedOnStart(true)
+//                ->defaultJsonPath(__DIR__ . "/../deep-link-default.json"),
 
             HasMany::make('Histories','linkContextHistories',LinkContextHistory::class)
         ];

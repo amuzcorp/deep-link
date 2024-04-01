@@ -2,7 +2,6 @@
 
 namespace AmuzPackages\DeepLink\Nova\Resources;
 
-use IbrahemKamal\JsonField\JsonField;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Fields\URL;
