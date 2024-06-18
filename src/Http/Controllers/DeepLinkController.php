@@ -24,29 +24,54 @@ class DeepLinkController extends Controller
         });
     }
 
-    public function getContext(Request $request): JsonResponse
+    public function getContext(Request $request,$shortLink = null): JsonResponse
     {
-        /** @var LinkContextHistory $linkContextHistory */
-        $linkContextHistory = LinkContextHistory::query()->where([
-            'ip_address' => $request->ip(),
-            'device_family' => $this->browserDetect->deviceFamily(),
-            'device_model' => $this->browserDetect->deviceModel(),
-            'device_type' => $this->browserDetect->deviceType(),
-            'platform_name' => $this->browserDetect->platformName(),
-            'platform_version' => $this->browserDetect->platformVersion(),
-            'platform_family' => $this->browserDetect->platformFamily(),
-        ])->first();
+        if($shortLink != null){
+            /** @var LinkContext $linkContext */
+            $linkContext = LinkContext::query()
+                ->with('deepLink')
+                ->where('short_link', $shortLink)
+                ->first();
 
-        if($linkContextHistory == null) return response()->json([]);
-        return response()->json($linkContextHistory->linkContext->getAttribute('context_data'));
+            if($linkContext == null) return response()->json([
+                'error' => -1,
+                'message' => 'undefined context'
+            ],401);
+
+            return response()->json([
+                'error' => 0,
+                'context' => $linkContext->getAttribute('context_data')
+            ]);
+        }else{
+            /** @var LinkContextHistory $linkContextHistory */
+            $linkContextHistory = LinkContextHistory::query()->where([
+                'ip_address' => $request->ip(),
+                'device_family' => $this->browserDetect->deviceFamily(),
+                'device_model' => $this->browserDetect->deviceModel(),
+                'device_type' => $this->browserDetect->deviceType(),
+                'platform_name' => $this->browserDetect->platformName(),
+                'platform_version' => $this->browserDetect->platformVersion(),
+                'platform_family' => $this->browserDetect->platformFamily(),
+            ])->first();
+
+            if($linkContextHistory == null) return response()->json([
+                'error' => -2,
+                'message' => 'context histories not found'
+            ],406);
+
+            return response()->json([
+                'error' => 0,
+                'context' => $linkContextHistory->linkContext->getAttribute('context_data')
+            ]);
+        }
     }
 
-    public function redirect(Request $request, $shortLinkId): View|RedirectResponse
+    public function redirect(Request $request, $shortLink): View|RedirectResponse
     {
         /** @var LinkContext $linkContext */
         $linkContext = LinkContext::query()
             ->with('deepLink')
-            ->where('short_link', $shortLinkId)
+            ->where('short_link', $shortLink)
             ->first();
         if(!$linkContext) return view(config('deep-link.pages.fail','deep-link::fail'));
 
@@ -68,10 +93,11 @@ class DeepLinkController extends Controller
             'user_agent' => $this->browserDetect->userAgent(),
         ]);
 
-        if($this->browserDetect->deviceType() == "Desktop"){
-            return redirect()->to($linkContext->deepLink->getAttribute('target_url'));
-        }else{
-            return view(config('deep-link.pages.run','deep-link::run'),compact('linkContextHistory','linkContext'));
-        }
+        return view(config('deep-link.pages.run','deep-link::run'),compact('linkContextHistory','linkContext'));
+//        if($this->browserDetect->deviceType() == "Desktop"){
+//            return redirect()->to($linkContext->deepLink->getAttribute('target_url'));
+//        }else{
+//            return view(config('deep-link.pages.run','deep-link::run'),compact('linkContextHistory','linkContext'));
+//        }
     }
 }

@@ -1,7 +1,6 @@
 <?php
 
 return [
-//    'prefix' => 'deep-link'
     'prefix' => 'dl',
     'pages' => [
         'run' => 'deep-link::run',
@@ -9,12 +8,13 @@ return [
     ],
     'app' => [
         'ios' => [
+            'scheme' => 'lgsc',
             'install_route' => 'application-install.ios',
             'bundle' => 'com.lge.lgsc',
         ],
         'android' => [
-            'install_route' => 'application-install.android',
-            'name' => 'lgsc',
+            'install_route' => 'application-install.aos',
+            'scheme' => 'lgsc',
             'package' => 'com.lge.lgsc',
         ],
         'default' => [

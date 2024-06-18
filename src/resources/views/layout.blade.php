@@ -9,7 +9,7 @@
     <style>
         body,html{
             height:100%;
-            background:#eee;
+            background:#e7eff1;
         }
         .container {
             text-align:center;
@@ -20,8 +20,9 @@
             width: 100%;
         }
     </style>
+    @yield('head')
 </head>
-<body>
+<body onload="@yield('bodyOnLoad')">
 <div class="container">
     <div>
         @yield('content')

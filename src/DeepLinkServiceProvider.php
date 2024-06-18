@@ -14,6 +14,7 @@ class DeepLinkServiceProvider extends AbstractPackageProvider
     {
         $this->mergeConfigFrom(__DIR__.'/config/deep-link.php','deep-link');
         $this->loadViewsFrom(__DIR__.'/resources/views','deep-link');
+        $this->loadJsonTranslationsFrom(package_lang_path('deep-link'));
 
          $this->app->booted(function () {
             $this->routes();
@@ -54,7 +55,7 @@ class DeepLinkServiceProvider extends AbstractPackageProvider
 
         Route::middleware(['web'])
                 ->name('deep-link.')
-                ->prefix(config('deep-link.prefix','deep-link'))
+                ->prefix(config('deep-link.prefix','dl'))
                 ->group(__DIR__.'/routes/deep-link-web.php');
 
     }
