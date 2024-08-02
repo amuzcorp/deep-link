@@ -14,7 +14,7 @@ return [
         ],
         'android' => [
             'install_route' => 'application-install.aos',
-            'scheme' => 'lgsc',
+            'scheme' => 'lgsc.lge.com',
             'package' => 'com.lge.lgsc',
         ],
         'default' => [
