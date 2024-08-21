@@ -3,6 +3,7 @@
 namespace AmuzPackages\DeepLink\Nova\Resources;
 
 use Laravel\Nova\Fields\BelongsTo;
+use Laravel\Nova\Fields\DateTime;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\URL;
 use Laravel\Nova\Http\Requests\NovaRequest;
@@ -50,6 +51,7 @@ class LinkContext extends Resource
                 return route('deep-link.short-link',['shortLink' => $linkContext->getAttribute('short_link')]);
             })->displayUsing(fn($value)=>$value),
 
+            DateTime::make(__('Created At'),'created_at'),
 //            JsonField::make('Data','context_data')
 //                ->onlyOnDetail()
 //                ->mode('view')
