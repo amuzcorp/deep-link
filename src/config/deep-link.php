@@ -10,12 +10,12 @@ return [
         'ios' => [
             'scheme' => 'lgsc',
             'install_route' => 'application-install.ios',
-            'bundle' => 'com.lge.lgsc',
+            'bundle' => 'com.lge.smartcheck',
         ],
         'android' => [
             'install_route' => 'application-install.aos',
             'scheme' => 'lgsc.lge.com',
-            'package' => 'com.lge.lgsc',
+            'package' => 'com.lge.smartcheck',
         ],
         'default' => [
             'install_route' => 'application-install.index'
