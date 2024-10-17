@@ -32,7 +32,7 @@ class LinkContext extends Resource
      * @var array
      */
     public static $search = [
-        'id',
+        'id', 'short_link',
     ];
 
     /**
