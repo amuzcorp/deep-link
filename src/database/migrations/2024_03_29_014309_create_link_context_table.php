@@ -17,7 +17,7 @@ return new class extends Migration
         Schema::create('link_contexts', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(DeepLink::class);
-            $table->text('short_link')->index();
+            $table->string('short_link', 255)->index();
             $table->json('context_data')->nullable();
             $table->timestamps();
         });
