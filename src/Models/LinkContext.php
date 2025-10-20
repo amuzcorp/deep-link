@@ -32,7 +32,16 @@ class LinkContext extends Model
 
     public function getShortLinkUrlAttribute(): string
     {
-        return route('deep-link.short-link',['shortLink' => $this->attributes['short_link']]);
+        $previousScheme = \Illuminate\Support\Facades\URL::formatScheme();
+        \Illuminate\Support\Facades\URL::forceScheme('https');
+
+        $url = route('deep-link.short-link', ['shortLink' => $this->attributes['short_link']]);
+
+        if ($previousScheme) {
+            \Illuminate\Support\Facades\URL::forceScheme($previousScheme);
+        }
+
+        return $url;
     }
 
     protected static function boot(): void
