@@ -43,7 +43,9 @@ class LinkContext extends Model
 
         // return $url;
 
-        return route('deep-link.short-link', ['shortLink' => $this->attributes['short_link']]);
+        return config('app.url') . '/' . $this->attributes['short_link'];
+
+        // return route('deep-link.short-link', ['shortLink' => $this->attributes['short_link']]);
     }
 
     protected static function boot(): void
