@@ -21,6 +21,9 @@ return [
             'install_route' => 'application-install.aos',
             'scheme' => env('DEEPLINK_ANDROID_HOST', $appDomain),
             'package' => env('DEEPLINK_ANDROID_PACKAGE', $isDevelopmentDomain ? 'com.lge.smartcheck.dev' : 'com.lge.smartcheck'),
+            'sha256_cert_fingerprints' => [
+                '85:B5:AF:C9:23:88:87:F1:07:E1:C2:F3:E3:55:EA:B7:C5:47:24:C5:22:6E:D7:D4:4C:5D:46:9B:FE:DE:A6:7D',
+            ],
         ],
         'default' => [
             'install_route' => 'application-install.index',

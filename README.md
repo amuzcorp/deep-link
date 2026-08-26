@@ -46,3 +46,16 @@ composer require xiso/deep-link:dev-main
 php artisan vendor:publish --tag=deep-link-config
 php artisan vendor:publish --tag=deep-link-migrations
 ```
+
+## LGSC application links
+
+The `lgsc` branch provides the LGSC environment-specific application identity.
+
+- `lgscdev.lge.com`: `lgscdev`, `com.lge.smartcheck.dev`
+- Other LGSC domains: `lgsc`, `com.lge.smartcheck`
+- Android verified App Links use the release signing certificate fingerprints
+  in `deep-link.app.android.sha256_cert_fingerprints`.
+
+LGSC serves these values from `GET /.well-known/assetlinks.json`. The
+fingerprints are public association metadata and must be updated here whenever
+the Android release signing certificate changes.
