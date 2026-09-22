@@ -31,6 +31,7 @@ class DeepLinkController extends Controller
             $linkContext = LinkContext::query()
                 ->with('deepLink')
                 ->where('short_link', $shortLink)
+                ->where(fn ($query) => $query->whereNull('expires_at')->orWhere('expires_at', '>', now()))
                 ->first();
 
             if($linkContext == null) return response()->json([
@@ -54,7 +55,9 @@ class DeepLinkController extends Controller
                 'platform_family' => $this->browserDetect->platformFamily(),
             ])->first();
 
-            if($linkContextHistory == null) return response()->json([
+            if($linkContextHistory == null || $linkContextHistory->linkContext == null
+                || ($linkContextHistory->linkContext->expires_at !== null
+                    && \Illuminate\Support\Carbon::parse($linkContextHistory->linkContext->expires_at)->isPast())) return response()->json([
                 'error' => -2,
                 'message' => 'context histories not found'
             ],406);
