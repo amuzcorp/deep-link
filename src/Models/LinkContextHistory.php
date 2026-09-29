@@ -10,6 +10,8 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
  */
 class LinkContextHistory extends Model
 {
+    use \App\Audit\AuditsChanges;
+
     protected $guarded = [];
     public function linkContext(): BelongsTo
     {
