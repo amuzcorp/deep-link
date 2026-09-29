@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
  */
 class DeepLink extends Model
 {
+    use \App\Audit\AuditsChanges;
+
     protected $guarded = [];
 
     public function linkContexts(): HasMany

@@ -13,6 +13,8 @@ use Illuminate\Support\Str;
  */
 class LinkContext extends Model
 {
+    use \App\Audit\AuditsChanges;
+
     protected $guarded = [];
     protected $casts = [
         'context_data' => 'array'
